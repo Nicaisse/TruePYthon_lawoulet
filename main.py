@@ -1,3 +1,11 @@
-from lawoulet import * 
+from lawoulet import *
+import keyboard
 
-play_game()
+
+
+
+while True:
+    play_game()
+    restart=input("pressez k pour stopper et autre touche pour continuer :").lower()
+    if restart=="k":
+        exit()

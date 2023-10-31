@@ -1,136 +1,145 @@
 import pickle
 import random
 import os
-
-nb_min = 50
-nb_max = 200
+nb_min=10
+nb_max = 100
 statut = True
 Nombre_secret = 55
-score = 0
+itilizate = {}
 liste_user = []
-itilizate={}
+fichier = "database.pkl"
 
-def fichierpickle():
+
+def fichierpickle(fichier):
     try:
-        with open('fichier_user.pkl', "rb") as fichier_pickle:
-            liste_user = pickle.load(fichier_pickle)
-            fichier_pickle.close
+        with open(fichier, "rb") as file:
+            liste_user = pickle.load(file)
     except FileNotFoundError:
-        liste_user=[]
-        with open('fichier_user.pkl','wb') as fichier_pickle:
-            pickle.dump(liste_user,fichier_pickle)
-            fichier_pickle.close
+        liste_user = []
     return liste_user
 
-# print('hello , Bienvenue dans le jeu de la roullette /n pressez "Q" pour commencer ')
 
+def save_user(fichier, liste_user):
+    with open(fichier, "wb") as fichier_pickle:
+        pickle.dump(liste_user, fichier_pickle)
+
+
+def games_md():
+    clear()
+    print("                   Bienvenue au jeu de la roulette !")
+    print(
+        "2 :Dans ce jeu, un nombre aleatoire sera choisi  un nombre secret entre 1 et 100."
+    )
+    print(
+        "3 :Votre tâche est de deviner ce nombre magique en utilisant le moins de tentatives possibles."
+    )
+    print("4 :Vous aurez au total 10 tentatives pour trouver le nombre secret")
+    print(
+        "5 :Après chaque tentative, l'ordinateur vous dira si votre nombre est plus grand ou plus petit que le nombre secret."
+    )
+    print(
+        "6 :Vous pouvez continuer à deviner jusqu'à ce que vous trouviez le nombre secrer ou que vous epuisez vos tentatives."
+    )
+    print("7 :Amusez-vous et que la meilleure devinette gagne!")
+    start_game = input("Etes-vous pret? (Y for yes or any key for exit):")
+    if start_game.lower() != "y":
+        exit()
+    else:
+        clear()
+
+def search_user(username):
+    username=username.lower()
+    while " " in username:
+        username = input("entrez un username valide : ")
+    search=fichierpickle(fichier)
+    for individu in search:
+        if individu['username']==username:
+            info_user=individu
+            return info_user
+    return None
+        
+    
 
 def Login():
-    print("le pseudo doit etre en minuscule et ne doit pas avoir d'espace")
-    pseudo = input("entrez un pseudo : ")
-    while not pseudo.islower() or " " in pseudo:
-        pseudo = input("entrez un pseudo : ")
-    liste_user=fichierpickle()
-
-    for individu in liste_user:
-        if individu['username']==pseudo:
-            info_user=individu
-            print(f"username:{info_user['username']}\n score: {info_user['score']}")
-
-            return info_user
-    info_user={'username':pseudo,'score':0}
-    liste_user.append(info_user)
-    with open('fichier_user.pkl','wb') as fichier_pickle:
-        pickle.dump(liste_user,fichier_pickle)
-        # fichier_pickle.close
-    print(f"username:{info_user['username']}\n score: {info_user['score']}")
-    return info_user
-
-
-
-
-def afficher():
-    utilisateur = {}
-    try:
-        with open("fichier_user.pkl", "rb") as fichier_pickle:
-            utilisateur = pickle.load(fichier_pickle)
-            fichier_pickle.close
-    except FileNotFoundError:
-        utilisateur = {}
-    for pseudo, var in utilisateur.items():
-        print(f"pseudo : {pseudo} \n score :{score}\n")
+    global liste_user
+    print("(Votre Username ne doit pas avoir d'espace)")
+    individu_trouve = 0
+    username = input("Entrez un username : ").lower()
+    while " " in username:
+        username = input("entrez un username : ")
+    liste_user=fichierpickle(fichier)
+    search=search_user(username)
+    if search is None:
+        info_user = {"username": username, "score": 0}
+        liste_user.append(info_user)
+        save_user(fichier, liste_user)
+        clear()
+        print(f"                   Bienvenue {info_user['username']}!          ")
+        print(
+                f"            Username : {info_user['username']}   Ancien score : {info_user['score']}"
+            )
+        return info_user
+    clear()
+    print(f"                   Bienvenue {search['username']}!          ")
+    print(
+        f"            Username : {search['username']}   Ancien score : {search['score']}"
+        )
+    return search
 
 
 def test_int():
     while True:
         try:
             nbtest = int(
-                input(
-                    f"veuillez entrer un nombre compris entre {nb_min} et {nb_max} : "
-                )
+                input(f"choose your number ( between {nb_min} and {nb_max} ) :")
             )
+
             return nbtest
         except:
-            print("ce nest pas un nombre")
+            print(f" is not a number, please retry")
 
 
 def demande(nb_min, nb_max):
     nombre = test_int()
-    while nombre < nb_min or nombre > nb_max:
+    while nombre <= nb_min or nombre > nb_max:
         nombre = test_int()
     return nombre
 
+def update_score(itilizate,newscore):
+    liste_user=fichierpickle(fichier)
+    for liste in liste_user:
+        if liste['username']==itilizate['username']:
+            liste['score']+=newscore
+            retr=liste['score']
+            save_user(fichier,liste_user)
+            return retr
+
+    return None
 
 def play_game():
-    
+    games_md()
     global itilizate
-    itilizate=Login()
-    chance = 2
-    chans2=0
-    chans3=3
-    result = demande(nb_min, nb_max)
-    while chance!=chans2:
-        if result == Nombre_secret:
-            ancien_score=itilizate['score']
-            nouvo_score=ancien_score +(chans3*30)
-            
-            itilizate['score']=nouvo_score
-            # sko= chans3 * 30
-            # newscore=itilizate['score']+sko
-            # liste_user.append(itilizate)
-            print(f"bravo votre score est {nouvo_score}")
-            liste_user.append(itilizate)
-            with open('fichier_user.pkl','wb') as fichier_pickle:
-                pickle.dump(liste_user,fichier_pickle)
-                fichier_pickle.close
-            print('score change')
-
-            
+    itilizate = Login()
+    ancien_score = itilizate["score"]
+    newscore=0
+    life = 10
+    while life > 0:
+        print(f"il vous reste {life} chance")
+        inpt=demande(nb_min,nb_max)
+        if inpt>nb_max:
+            print("le nombre secret est plus petit")
+        elif inpt<nb_min:
+            print("le nombe secret est plus grand")    
+        elif inpt==Nombre_secret:
+            newscore=(life*30)
+            update=update_score(itilizate,newscore)
+            print('         BRAVO VOUS AVEZ GAGNE')
+            print(f"            votre nouveau score est :{update}")
             break
-        else:
-            chans2+=1
-            chans3=chans3-1
-            print(f"il vous reste {chans3} vies")
-
-            if result < Nombre_secret:
-                print("le nombre cache est plus grand")
-                result = demande(nb_min, nb_max)
-
-            else:
-                print("le nombre secret est plus petit")
-                result = demande(nb_min, nb_max)
-
-    if chance == chans2:
-        print("vous avez perdu la partie")
-        print(f"le nombre cache etait{Nombre_secret}")
-    # if itilizate['username'] in liste_user:
-    
-    
-
-def clear():
-    if os.name == "posix":
-        os.system("clear")
-    elif os.name == "nt":
-        os.system("cls")
+        life-=1
+    else:
+        print(f"vous avez perdu et votre score reste {ancien_score}")
+        print(f"le nombre secret etait : {Nombre_secret}")
 
 
+def clear():os.system("cls")
