@@ -126,10 +126,14 @@ def play_game():
     while life > 0:
         print(f"il vous reste {life} chance")
         inpt=demande(nb_min,nb_max)
-        if inpt>nb_max:
+        if inpt>Nombre_secret:
             print("le nombre secret est plus petit")
-        elif inpt<nb_min:
-            print("le nombe secret est plus grand")    
+            inpt=demande(nb_min,nb_max)
+
+        elif inpt<Nombre_secret:
+            print("le nombe secret est plus grand")  
+            inpt=demande(nb_min,nb_max)
+  
         elif inpt==Nombre_secret:
             newscore=(life*30)
             update=update_score(itilizate,newscore)
