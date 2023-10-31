@@ -134,7 +134,7 @@ def play_game():
             newscore=(life*30)
             update=update_score(itilizate,newscore)
             print('         BRAVO VOUS AVEZ GAGNE')
-            print(f"            votre nouveau score est :{update}")
+            print(f"            votre nouveau score est :{newscore}")
             break
         life-=1
     else:
