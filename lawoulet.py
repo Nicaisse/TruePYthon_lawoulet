@@ -4,7 +4,7 @@ import os
 nb_min=10
 nb_max = 100
 statut = True
-Nombre_secret = 55
+Nombre_secret = random.randint(nb_min,nb_max)
 itilizate = {}
 liste_user = []
 fichier = "database.pkl"
