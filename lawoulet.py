@@ -133,7 +133,7 @@ def play_game():
         elif inpt<Nombre_secret:
             print("le nombe secret est plus grand")  
             inpt=demande(nb_min,nb_max)
-  
+    
         elif inpt==Nombre_secret:
             newscore=(life*30)
             update=update_score(itilizate,newscore)
